@@ -1,0 +1,5 @@
+{
+    "elm.formatCommand": "./node-modules/.bin/elm-format",
+    "elm.makeCommand": "./node-modules/.bin/elm-make",
+    "files.eol": "\n"
+}
