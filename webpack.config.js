@@ -2,10 +2,10 @@ const path = require('path');
 const webpack = require('webpack')
 
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
-const HtmlWebpackPlugin = require('html-webpack-plugin')
-const HtmlWebpackExcludeAssetsPlugin = require('html-webpack-exclude-assets-plugin')
+const HtmlPlugin = require('html-webpack-plugin')
+const HtmlExcludeAssetsPlugin = require('html-webpack-exclude-assets-plugin')
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin')
-const RemoveSourceWebpackPlugin = require('remove-source-webpack-plugin')
+const RemoveSourcePlugin = require('remove-source-webpack-plugin')
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 
 module.exports = {
@@ -38,7 +38,10 @@ module.exports = {
                         passes: 3,
                         ecma: 5, // Set to 6+ to enable the following
                         unsafe_arrows: true,
-                        unsafe_methods: true
+                        unsafe_methods: true,
+                        properties: {
+                            reserved: ['Main']
+                        }
                     },
                     mangle: true,
                     toplevel: true
@@ -51,7 +54,7 @@ module.exports = {
         new MiniCssExtractPlugin({
             filename: '[name].css'
         }),
-        new HtmlWebpackPlugin({
+        new HtmlPlugin({
             title: "elm-dnd",
             minify: {
                 collapseInlineTagWhitespace: true,
@@ -66,7 +69,7 @@ module.exports = {
             },
             excludeAssets: [/style\.js/]
         }),
-        new HtmlWebpackExcludeAssetsPlugin(),
-        new RemoveSourceWebpackPlugin(/style\.js/)
+        new HtmlExcludeAssetsPlugin(),
+        new RemoveSourcePlugin(/style\.js/)
     ]
 };

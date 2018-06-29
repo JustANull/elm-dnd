@@ -6,6 +6,7 @@ import Html.Events exposing (onCheck, onInput)
 import Maybe
 import Result
 import String
+
 import Ability
 import Character
 import Skill

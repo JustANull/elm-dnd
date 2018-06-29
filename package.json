@@ -1,7 +1,7 @@
 {
   "private": true,
   "scripts": {
-    "prebuild": "rimraf dist && mkdirp dist",
+    "prebuild": "rimraf dist",
     "build": "elm-make src/Main.elm --output elm-stuff/Main.js && webpack",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -19,6 +19,5 @@
     "uglifyjs-webpack-plugin": "^1.2.7",
     "webpack": "^4.12.2",
     "webpack-cli": "^3.0.8"
-  },
-  "sideEffects": false
+  }
 }
