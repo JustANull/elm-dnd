@@ -6,7 +6,8 @@
     "dev": "webpack-serve --port 3000",
     "build": "webpack",
     "prod": "webpack -p",
-    "deploy": "npm run prod && gh-pages -d dist"
+    "predeploy": "npm run prod",
+    "deploy": "gh-pages -d dist"
   },
   "devDependencies": {
     "@babel/core": "^7.1.2",
