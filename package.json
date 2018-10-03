@@ -7,7 +7,7 @@
     "build": "webpack",
     "prod": "webpack -p",
     "predeploy": "npm run prod",
-    "deploy": "gh-pages -d dist"
+    "deploy": "gh-pages -td dist"
   },
   "devDependencies": {
     "@babel/core": "^7.1.2",
