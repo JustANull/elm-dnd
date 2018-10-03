@@ -20,7 +20,7 @@ const common = {
   entry: path.join(__dirname, "apps/web/src/index.js"),
   output: {
     path: path.join(__dirname, "dist"),
-    publicPath: "/",
+    publicPath: "./",
     filename: filename
   },
   plugins: [
@@ -31,7 +31,7 @@ const common = {
   ],
   resolve: {
     modules: [path.join(__dirname, "apps/web/src"), "node_modules"],
-    extensions: [".css", ".elm", ".js"]
+    extensions: [".css", ".elm"]
   },
   module: {
     rules: [
