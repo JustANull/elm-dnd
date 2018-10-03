@@ -1,4 +1,4 @@
-module Skill exposing (..)
+module Skill exposing (Message(..), Skill, Skills, ability, defaultSkills, getter, list, name, update)
 
 import Ability exposing (Ability)
 
@@ -94,7 +94,7 @@ list =
 
 ability : Skill -> Ability.Ability
 ability kind =
-    case (kind False) of
+    case kind False of
         Acrobatics _ ->
             Ability.Dexterity
 
@@ -149,7 +149,7 @@ ability kind =
 
 getter : Skill -> Skills -> Bool
 getter kind =
-    case (kind False) of
+    case kind False of
         Acrobatics _ ->
             .acrobatics
 
@@ -204,7 +204,7 @@ getter kind =
 
 name : Skill -> String
 name kind =
-    case (kind False) of
+    case kind False of
         Acrobatics _ ->
             "Acrobatics"
 

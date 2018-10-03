@@ -1,4 +1,4 @@
-module Ability exposing (..)
+module Ability exposing (Abilities, Ability, Message(..), default, defaultAbilities, getter, list, name, update)
 
 
 type alias Abilities =
@@ -53,7 +53,7 @@ list =
 
 getter : Ability -> Abilities -> Int
 getter kind =
-    case (kind 0) of
+    case kind 0 of
         Strength _ ->
             .strength
 
@@ -75,7 +75,7 @@ getter kind =
 
 name : (Int -> Message) -> String
 name kind =
-    case (kind 0) of
+    case kind 0 of
         Strength _ ->
             "Strength"
 

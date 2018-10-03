@@ -1,4 +1,4 @@
-module Character exposing (..)
+module Character exposing (Character, Message(..), abilityModifier, defaultCharacter, defaultLevel, proficiencyModifier, skillModifier, update)
 
 import Ability
 import Skill
@@ -11,8 +11,11 @@ type alias Character =
     , skills : Skill.Skills
     }
 
+
 defaultLevel : Int
-defaultLevel = 1
+defaultLevel =
+    1
+
 
 defaultCharacter : Character
 defaultCharacter =
@@ -40,22 +43,23 @@ abilityModifier character ability =
         getter =
             Ability.getter ability
     in
-        (getter character.abilities) // 2 - 5
+    getter character.abilities // 2 - 5
 
 
 skillModifier : Character -> Skill.Skill -> Int
 skillModifier character skill =
     let
         appliedProficiency =
-            if (Skill.getter skill <| character.skills) then
+            if Skill.getter skill <| character.skills then
                 proficiencyModifier character
+
             else
                 0
 
         ability =
             Skill.ability skill
     in
-        appliedProficiency + (abilityModifier character ability)
+    appliedProficiency + abilityModifier character ability
 
 
 update : Character -> Message -> Character
