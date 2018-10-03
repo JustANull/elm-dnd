@@ -13,7 +13,7 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
 
 const mode = process.env.npm_lifecycle_event === "prod" ? "production" : "development";
-const filename = mode === "production" ? "[name]-[hash].js" : "index.js";
+const filename = mode === "production" ? "[contenthash].js" : "index.js";
 
 const common = {
   mode: mode,
@@ -26,7 +26,19 @@ const common = {
   plugins: [
     new HtmlPlugin({
       title: "elm-dnd",
-      inject: "body"
+      inject: "body",
+      minify: mode === "production" && {
+        collapseWhitespace: true,
+        minifyURLs: true,
+        removeComments: true,
+        removeEmptyAttributes: true,
+        removeRedundantAttributes: true,
+        removeScriptTypeAttributes: true,
+        removeStyleLinkTypeAttributes: true,
+        sortAttributes: true,
+        sortClassName: true,
+        useShortDoctype: true
+      }
     })
   ],
   resolve: {
@@ -123,7 +135,7 @@ if (mode === "development") {
         }
       ]),
       new MiniCssExtractPlugin({
-        filename: "[name]-[hash].css"
+        filename: "[contenthash].css"
       })
     ],
     module: {
