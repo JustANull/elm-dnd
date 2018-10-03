@@ -126,7 +126,16 @@ if (mode === "development") {
           parallel: true,
           sourceMap: false
         }),
-        new OptimizeCssAssetsPlugin({})
+        new OptimizeCssAssetsPlugin({
+          cssProcessorOptions: {
+            autoprefixer: true,
+            cssDeclarationSorter: true,
+            discardUnused: true,
+            mergeIdents: true,
+            reduceIdents: true,
+            zindex: true
+          }
+        })
       ]
     },
     plugins: [
