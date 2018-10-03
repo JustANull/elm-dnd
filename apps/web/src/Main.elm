@@ -14,8 +14,8 @@ import Skill
 import String
 
 
-pureUpdate : (a -> b -> c) -> (a -> b -> ( c, Cmd d ))
-pureUpdate f =
+pureUpdate2 : (a -> b -> c) -> (a -> b -> ( c, Cmd d ))
+pureUpdate2 f =
     \aVal bVal -> ( f aVal bVal, Cmd.none )
 
 
@@ -30,14 +30,19 @@ main =
         { init = initCharacter
         , subscriptions = always Sub.none
         , view = view
-        , update = pureUpdate <| flip Character.update
+        , update = pureUpdate2 <| flip Character.update
         }
 
 
-labeledCheckbox : (Bool -> msg) -> String -> Html msg
-labeledCheckbox msg lbl =
+labeledCheckbox : (Bool -> msg) -> Bool -> String -> Html msg
+labeledCheckbox msg chk lbl =
     label []
-        [ input [ type_ "checkbox", onCheck msg ] []
+        [ input
+            [ type_ "checkbox"
+            , checked chk
+            , onCheck msg
+            ]
+            []
         , text lbl
         ]
 
@@ -82,11 +87,15 @@ abilityInput_ modifier ability =
 
 abilityInput : Character.Character -> Ability.Ability -> Html Ability.Message
 abilityInput character ability =
-    lazy2 abilityInput_ (Character.abilityModifier character ability) ability
+    let
+        modifier =
+            Character.abilityModifier character ability
+    in
+    lazy2 abilityInput_ modifier ability
 
 
-skillInput_ : Int -> Skill.Skill -> Html Skill.Message
-skillInput_ modifier skill =
+skillInput_ : Bool -> Int -> Skill.Skill -> Html Skill.Message
+skillInput_ checked modifier skill =
     let
         abilityDescription =
             String.left 3 <| Ability.name <| Skill.ability skill
@@ -97,12 +106,19 @@ skillInput_ modifier skill =
         description =
             skillDescription ++ toSignedString modifier
     in
-    labeledCheckbox skill description
+    labeledCheckbox skill checked description
 
 
 skillInput : Character.Character -> Skill.Skill -> Html Skill.Message
 skillInput character skill =
-    lazy2 skillInput_ (Character.skillModifier character skill) skill
+    let
+        checked =
+            Character.hasSkill character skill
+
+        modifier =
+            Character.skillModifier character skill
+    in
+    lazy3 skillInput_ checked modifier skill
 
 
 view : Character.Character -> Document Character.Message

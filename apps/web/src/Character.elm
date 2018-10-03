@@ -1,4 +1,4 @@
-module Character exposing (Character, Message(..), abilityModifier, defaultCharacter, defaultLevel, proficiencyModifier, skillModifier, update)
+module Character exposing (Character, Message(..), abilityModifier, defaultCharacter, defaultLevel, hasSkill, proficiencyModifier, skillModifier, update)
 
 import Ability
 import Skill
@@ -44,6 +44,11 @@ abilityModifier character ability =
             Ability.getter ability
     in
     getter character.abilities // 2 - 5
+
+
+hasSkill : Character -> Skill.Skill -> Bool
+hasSkill character skill =
+    Skill.getter skill character.skills
 
 
 skillModifier : Character -> Skill.Skill -> Int
