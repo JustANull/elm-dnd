@@ -64,8 +64,8 @@ update character msg =
         Level val ->
             { character | level = val }
 
-        Ability msg ->
-            { character | abilities = Ability.update character.abilities msg }
+        Ability ability_msg ->
+            { character | abilities = Ability.update character.abilities ability_msg }
 
-        Skill msg ->
-            { character | skills = Skill.update character.skills msg }
+        Skill skill_msg ->
+            { character | skills = Skill.update character.skills skill_msg }
