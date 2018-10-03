@@ -24,8 +24,8 @@ type alias Skills =
     }
 
 
-basicSkills : Skills
-basicSkills =
+defaultSkills : Skills
+defaultSkills =
     { acrobatics = False
     , animalHandling = False
     , arcana = False

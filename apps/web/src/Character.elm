@@ -14,12 +14,12 @@ type alias Character =
 defaultLevel : Int
 defaultLevel = 1
 
-basicCharacter : Character
-basicCharacter =
+defaultCharacter : Character
+defaultCharacter =
     { name = "Default Name"
     , level = defaultLevel
-    , abilities = Ability.basicAbilities
-    , skills = Skill.basicSkills
+    , abilities = Ability.defaultAbilities
+    , skills = Skill.defaultSkills
     }
 
 

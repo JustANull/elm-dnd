@@ -16,8 +16,8 @@ default =
     10
 
 
-basicAbilities : Abilities
-basicAbilities =
+defaultAbilities : Abilities
+defaultAbilities =
     { strength = default
     , dexterity = default
     , constitution = default

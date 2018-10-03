@@ -22,7 +22,7 @@ pureUpdate f =
 
 initCharacter : Int -> (Character.Character, Cmd Character.Message)
 initCharacter _ =
-    (Character.basicCharacter, Cmd.none)
+    (Character.defaultCharacter, Cmd.none)
 
 
 main : Program Int Character.Character Character.Message
