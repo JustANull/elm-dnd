@@ -42,8 +42,11 @@ const common = {
     })
   ],
   resolve: {
-    modules: [path.join(__dirname, "apps/web/src"), "node_modules"],
-    extensions: [".css", ".elm"]
+    modules: [
+      path.join(__dirname, "apps/web/src"),
+      "node_modules"
+    ],
+    extensions: [".css", ".elm", ".js"]
   },
   module: {
     rules: [
@@ -57,7 +60,11 @@ const common = {
       {
         test: /\.css$/,
         exclude: [/\belm\-stuff\b/, /\bnode_modules\b/],
-        loaders: ["style-loader", "css-loader?url=false"]
+        loaders: [
+          mode === "production" ? MiniCssExtractPlugin.loader : "style-loader",
+          "css-loader?url=false",
+          "postcss-loader"
+        ]
       }
     ]
   }
@@ -151,11 +158,6 @@ if (mode === "development") {
               }
             }
           ]
-        },
-        {
-          test: /\.css$/,
-          exclude: [/\belm\-stuff\b/, /\bnode_modules\b/],
-          loaders: [MiniCssExtractPlugin.loader, "css-loader?url=false"]
         }
       ]
     }

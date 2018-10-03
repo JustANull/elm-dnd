@@ -1,6 +1,7 @@
 "use strict";
 
 import { Elm } from "Main";
+import css from "styles";
 
 var content = document.createElement("div");
 const app = Elm.Main.init({
