@@ -5,7 +5,7 @@ import Flip exposing (flip)
 import Html exposing (Attribute, Html, div, label, input, text)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onCheck, onInput)
-import Html.Lazy exposing (lazy)
+import Html.Lazy exposing (..)
 import Maybe
 import Result
 import String
@@ -35,51 +35,73 @@ main =
         }
 
 
+labeledCheckbox : (Bool -> msg) -> String -> Html msg
+labeledCheckbox msg lbl =
+    label []
+        [ input [ type_ "checkbox", onCheck msg ] []
+        , text lbl
+        ]
+
+
+labeledNumericInput : (String -> msg) -> String -> String -> Html msg
+labeledNumericInput msg plc lbl =
+    div []
+        [ input
+              [ type_ "number"
+              , placeholder plc
+              , onInput msg
+              ]
+              []
+        , text lbl
+        ]
+
+
 toSignedString : Int -> String
 toSignedString n =
     let
-        sign =
-            if (n >= 0) then
-                "+"
-            else
-                ""
+        asString = String.fromInt n
     in
-        sign ++ String.fromInt n
+        if (n >= 0) then
+            "+" ++ asString
+        else
+            asString
+
+
+abilityInput_ : Int -> Ability.Ability -> Html Ability.Message
+abilityInput_ modifier ability =
+    let
+        cleanInput =
+            String.toInt >> Maybe.withDefault Ability.default >> ability
+
+        placeholder =
+            String.fromInt Ability.default
+    in
+        labeledNumericInput cleanInput placeholder (toSignedString modifier)
 
 
 abilityInput : Character.Character -> Ability.Ability -> Html Ability.Message
 abilityInput character ability =
-    let
-        abilityModifier =
-            Character.abilityModifier character ability
-
-        cleanInput =
-            String.toInt >> Maybe.withDefault Ability.default >> ability
-    in
-        div [ id <| Ability.name ability ]
-            [ input
-                [ type_ "number"
-                , placeholder <| String.fromInt Ability.default
-                , onInput cleanInput
-                ]
-                []
-            , text <| toSignedString abilityModifier
-            ]
+    lazy2 abilityInput_ (Character.abilityModifier character ability) ability
 
 
-skillInput : Character.Character -> Skill.Skill -> Html Skill.Message
-skillInput character skill =
+skillInput_ : Int -> Skill.Skill -> Html Skill.Message
+skillInput_ modifier skill =
     let
         abilityDescription =
             String.left 3 <| Ability.name <| Skill.ability skill
 
-        description =
+        skillDescription =
             Skill.name skill ++ " (" ++ abilityDescription ++ "): "
+
+        description =
+            skillDescription ++ toSignedString modifier
     in
-        label []
-            [ input [ type_ "checkbox", onCheck skill ] []
-            , text <| description ++ toSignedString (Character.skillModifier character skill)
-            ]
+        labeledCheckbox skill description
+
+
+skillInput : Character.Character -> Skill.Skill -> Html Skill.Message
+skillInput character skill =
+    lazy2 skillInput_ (Character.skillModifier character skill) skill
 
 
 view : Character.Character -> Document Character.Message
@@ -91,14 +113,7 @@ view character =
         { title = "elm-dnd"
         , body =
             [ div []
-                  [ div []
-                        [ input
-                              [ type_ "number"
-                              , placeholder <| String.fromInt Character.defaultLevel
-                              , onInput cleanInput
-                              ] []
-                        , text <| toSignedString <| Character.proficiencyModifier character
-                        ]
+                  [ labeledNumericInput cleanInput (String.fromInt Character.defaultLevel) (toSignedString <| Character.proficiencyModifier character)
                   , Html.map Character.Ability
                       (div []
                            (List.map (abilityInput character) Ability.list)
