@@ -1,6 +1,6 @@
 "use strict";
 
-import { Elm } from "Main";
+import { Elm } from "./Main";
 
 var content = document.createElement("div");
 const app = Elm.Main.init({

@@ -40,10 +40,6 @@ const common = {
     })
   ],
   resolve: {
-    modules: [
-      path.join(__dirname, "apps/web/src"),
-      path.join(__dirname, "node_modules")
-    ],
     extensions: [".elm", ".js"]
   },
   module: {
