@@ -8,8 +8,6 @@ const merge = require("webpack-merge");
 const CleanPlugin = require("clean-webpack-plugin");
 const CopyPlugin = require("copy-webpack-plugin");
 const HtmlPlugin = require("html-webpack-plugin");
-const OptimizeCssAssetsPlugin = require("optimize-css-assets-webpack-plugin");
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
 
 const mode = process.env.npm_lifecycle_event === "prod" ? "production" : "development";
@@ -44,9 +42,9 @@ const common = {
   resolve: {
     modules: [
       path.join(__dirname, "apps/web/src"),
-      "node_modules"
+      path.join(__dirname, "node_modules")
     ],
-    extensions: [".css", ".elm", ".js"]
+    extensions: [".elm", ".js"]
   },
   module: {
     rules: [
@@ -56,15 +54,6 @@ const common = {
         use: {
           loader: "babel-loader"
         }
-      },
-      {
-        test: /\.css$/,
-        exclude: [/\belm\-stuff\b/, /\bnode_modules\b/],
-        loaders: [
-          mode === "production" ? MiniCssExtractPlugin.loader : "style-loader",
-          "css-loader?url=false",
-          "postcss-loader"
-        ]
       }
     ]
   }
@@ -125,16 +114,6 @@ if (mode === "development") {
           cache: true,
           parallel: true,
           sourceMap: false
-        }),
-        new OptimizeCssAssetsPlugin({
-          cssProcessorOptions: {
-            autoprefixer: true,
-            cssDeclarationSorter: true,
-            discardUnused: true,
-            mergeIdents: true,
-            reduceIdents: true,
-            zindex: true
-          }
         })
       ]
     },
@@ -149,10 +128,7 @@ if (mode === "development") {
         {
           from: "apps/web/assets"
         }
-      ]),
-      new MiniCssExtractPlugin({
-        filename: "[contenthash].css"
-      })
+      ])
     ],
     module: {
       rules: [
