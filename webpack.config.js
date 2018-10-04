@@ -42,6 +42,9 @@ const common = {
     })
   ],
   resolve: {
+    modules: [
+      "node_modules"
+    ],
     extensions: [".css", ".elm", ".js"]
   },
   module: {
@@ -50,12 +53,15 @@ const common = {
         test: /\.js$/,
         exclude: /\bnode_modules\b/,
         use: {
-          loader: "babel-loader"
+          loader: "babel-loader",
+          options: {
+            presets: ["@babel/preset-env"]
+          }
         }
       },
       {
         test: /\.css$/,
-        exclude: [/\belm\-stuff\b/, /\bnode_modules\b/],
+        exclude: [/\belm\-stuff\b/],
         loaders: [
           mode === "production" ? MiniCssExtractPlugin.loader : "style-loader",
           "css-loader?url=false"
