@@ -4,10 +4,10 @@ import Ability
 import Browser exposing (Document)
 import Character
 import Flip exposing (flip)
-import Html exposing (Attribute, Html, div, input, label, text)
-import Html.Attributes exposing (..)
-import Html.Events exposing (onCheck, onInput)
-import Html.Lazy exposing (..)
+import Html.Styled exposing (Html, button, div, input, label, text)
+import Html.Styled.Attributes exposing (placeholder)
+import Html.Styled.Events exposing (onClick, onInput)
+import Html.Styled.Lazy exposing (lazy2, lazy3)
 import Maybe
 import Result
 import Skill
@@ -34,13 +34,11 @@ main =
         }
 
 
-labeledCheckbox : (Bool -> msg) -> Bool -> String -> Html msg
+labeledCheckbox : msg -> Bool -> String -> Html msg
 labeledCheckbox msg chk lbl =
     label []
-        [ input
-            [ type_ "checkbox"
-            , checked chk
-            , onCheck msg
+        [ button
+            [ onClick msg
             ]
             []
         , text lbl
@@ -51,8 +49,7 @@ labeledNumericInput : (String -> msg) -> String -> String -> Html msg
 labeledNumericInput msg plc lbl =
     div []
         [ input
-            [ type_ "number"
-            , placeholder plc
+            [ placeholder plc
             , onInput msg
             ]
             []
@@ -95,7 +92,7 @@ abilityInput character ability =
 
 
 skillInput_ : Bool -> Int -> Skill.Skill -> Html Skill.Message
-skillInput_ checked modifier skill =
+skillInput_ hasSkill modifier skill =
     let
         abilityDescription =
             String.left 3 <| Ability.name <| Skill.ability skill
@@ -105,20 +102,23 @@ skillInput_ checked modifier skill =
 
         description =
             skillDescription ++ toSignedString modifier
+
+        toggleSkill =
+            skill <| not hasSkill
     in
-    labeledCheckbox skill checked description
+    labeledCheckbox toggleSkill hasSkill description
 
 
 skillInput : Character.Character -> Skill.Skill -> Html Skill.Message
 skillInput character skill =
     let
-        checked =
+        hasSkill =
             Character.hasSkill character skill
 
         modifier =
             Character.skillModifier character skill
     in
-    lazy3 skillInput_ checked modifier skill
+    lazy3 skillInput_ hasSkill modifier skill
 
 
 view : Character.Character -> Document Character.Message
@@ -129,16 +129,17 @@ view character =
     in
     { title = "elm-dnd"
     , body =
-        [ div []
-            [ labeledNumericInput cleanInput (String.fromInt Character.defaultLevel) (toSignedString <| Character.proficiencyModifier character)
-            , Html.map Character.Ability
-                (div []
-                    (List.map (abilityInput character) Ability.list)
-                )
-            , Html.map Character.Skill
-                (div []
-                    (List.map (skillInput character) Skill.list)
-                )
+        List.map Html.Styled.toUnstyled
+            [ div []
+                [ labeledNumericInput cleanInput (String.fromInt Character.defaultLevel) (toSignedString <| Character.proficiencyModifier character)
+                , Html.Styled.map Character.Ability
+                    (div []
+                        (List.map (abilityInput character) Ability.list)
+                    )
+                , Html.Styled.map Character.Skill
+                    (div []
+                        (List.map (skillInput character) Skill.list)
+                    )
+                ]
             ]
-        ]
     }

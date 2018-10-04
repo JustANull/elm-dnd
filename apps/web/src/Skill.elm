@@ -70,6 +70,10 @@ type alias Skill =
     Bool -> Message
 
 
+type alias ToggleSkill =
+    Message
+
+
 list : List Skill
 list =
     [ Acrobatics
