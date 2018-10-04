@@ -27,7 +27,8 @@ defaultCharacter =
 
 
 type Message
-    = Level Int
+    = Name String
+    | Level Int
     | Ability Ability.Message
     | Skill Skill.Message
 
@@ -70,6 +71,9 @@ skillModifier character skill =
 update : Character -> Message -> Character
 update character msg =
     case msg of
+        Name val ->
+            { character | name = val }
+
         Level val ->
             { character | level = val }
 

@@ -3,9 +3,10 @@ module Main exposing (main)
 import Ability
 import Browser exposing (Document)
 import Character
+import Css exposing (..)
 import Flip exposing (flip)
-import Html.Styled exposing (Html, button, div, input, label, text)
-import Html.Styled.Attributes exposing (checked, placeholder, type_)
+import Html.Styled exposing (Attribute, Html, button, div, input, label, text)
+import Html.Styled.Attributes exposing (checked, css, placeholder, type_)
 import Html.Styled.Events exposing (onCheck, onInput)
 import Html.Styled.Lazy exposing (lazy2, lazy3)
 import Maybe
@@ -34,30 +35,11 @@ main =
         }
 
 
-labeledCheckbox : (Bool -> msg) -> Bool -> String -> Html msg
-labeledCheckbox msg chk lbl =
-    label []
-        [ input
-            [ type_ "checkbox"
-            , checked chk
-            , onCheck msg
-            ]
-            []
-        , text lbl
-        ]
-
-
-labeledNumericInput : (String -> msg) -> String -> String -> Html msg
-labeledNumericInput msg plc lbl =
-    div []
-        [ input
-            [ type_ "number"
-            , placeholder plc
-            , onInput msg
-            ]
-            []
-        , text lbl
-        ]
+labeledInput : List (Attribute msg) -> List (Html msg) -> Html msg
+labeledInput attributes lbl =
+    label [] <|
+        input attributes []
+            :: lbl
 
 
 toSignedString : Int -> String
@@ -75,14 +57,12 @@ toSignedString n =
 
 abilityInput_ : Int -> Ability.Ability -> Html Ability.Message
 abilityInput_ modifier ability =
-    let
-        cleanInput =
-            String.toInt >> Maybe.withDefault Ability.default >> ability
-
-        placeholder =
-            String.fromInt Ability.default
-    in
-    labeledNumericInput cleanInput placeholder (toSignedString modifier)
+    labeledInput
+        [ type_ "number"
+        , placeholder <| String.fromInt Ability.default
+        , onInput <| String.toInt >> Maybe.withDefault Ability.default >> ability
+        ]
+        [ text <| toSignedString modifier ]
 
 
 abilityInput : Character.Character -> Ability.Ability -> Html Ability.Message
@@ -106,7 +86,12 @@ skillInput_ hasSkill modifier skill =
         description =
             skillDescription ++ toSignedString modifier
     in
-    labeledCheckbox skill hasSkill description
+    labeledInput
+        [ type_ "checkbox"
+        , checked hasSkill
+        , onCheck skill
+        ]
+        [ text description ]
 
 
 skillInput : Character.Character -> Skill.Skill -> Html Skill.Message
@@ -130,14 +115,35 @@ view character =
     { title = "elm-dnd"
     , body =
         List.map Html.Styled.toUnstyled
-            [ div []
-                [ labeledNumericInput cleanInput (String.fromInt Character.defaultLevel) (toSignedString <| Character.proficiencyModifier character)
+            [ div
+                [ css
+                    [ displayFlex
+                    , flexDirection column
+                    ]
+                ]
+                [ input
+                    [ placeholder "Name"
+                    , onInput Character.Name
+                    ]
+                    []
+                , labeledInput
+                    [ type_ "number"
+                    , placeholder <| String.fromInt Character.defaultLevel
+                    , onInput cleanInput
+                    ]
+                    [ text <| toSignedString <| Character.proficiencyModifier character ]
                 , Html.Styled.map Character.Ability
                     (div []
                         (List.map (abilityInput character) Ability.list)
                     )
                 , Html.Styled.map Character.Skill
-                    (div []
+                    (div
+                        [ css
+                            [ displayFlex
+                            , flexDirection column
+                            , flexWrap wrap
+                            ]
+                        ]
                         (List.map (skillInput character) Skill.list)
                     )
                 ]
