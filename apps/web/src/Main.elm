@@ -5,8 +5,8 @@ import Browser exposing (Document)
 import Character
 import Flip exposing (flip)
 import Html.Styled exposing (Html, button, div, input, label, text)
-import Html.Styled.Attributes exposing (placeholder)
-import Html.Styled.Events exposing (onClick, onInput)
+import Html.Styled.Attributes exposing (checked, placeholder, type_)
+import Html.Styled.Events exposing (onCheck, onInput)
 import Html.Styled.Lazy exposing (lazy2, lazy3)
 import Maybe
 import Result
@@ -34,11 +34,13 @@ main =
         }
 
 
-labeledCheckbox : msg -> Bool -> String -> Html msg
+labeledCheckbox : (Bool -> msg) -> Bool -> String -> Html msg
 labeledCheckbox msg chk lbl =
     label []
-        [ button
-            [ onClick msg
+        [ input
+            [ type_ "checkbox"
+            , checked chk
+            , onCheck msg
             ]
             []
         , text lbl
@@ -49,7 +51,8 @@ labeledNumericInput : (String -> msg) -> String -> String -> Html msg
 labeledNumericInput msg plc lbl =
     div []
         [ input
-            [ placeholder plc
+            [ type_ "number"
+            , placeholder plc
             , onInput msg
             ]
             []
@@ -102,11 +105,8 @@ skillInput_ hasSkill modifier skill =
 
         description =
             skillDescription ++ toSignedString modifier
-
-        toggleSkill =
-            skill <| not hasSkill
     in
-    labeledCheckbox toggleSkill hasSkill description
+    labeledCheckbox skill hasSkill description
 
 
 skillInput : Character.Character -> Skill.Skill -> Html Skill.Message
