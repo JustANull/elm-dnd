@@ -1,6 +1,6 @@
 "use strict";
 
-import "normalize.css";
+import "styles";
 import { Elm } from "./Main";
 
 var content = document.createElement("div");

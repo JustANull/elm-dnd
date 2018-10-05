@@ -5,7 +5,7 @@ import Browser exposing (Document)
 import Character
 import Flip exposing (flip)
 import Html exposing (Attribute, Html, button, div, input, label, text)
-import Html.Attributes exposing (checked, class, placeholder, type_)
+import Html.Attributes exposing (checked, class, classList, placeholder, type_)
 import Html.Events exposing (onCheck, onInput)
 import Html.Lazy exposing (lazy2, lazy3)
 import Maybe
@@ -113,7 +113,10 @@ view character =
     in
     { title = "elm-dnd"
     , body =
-        [ div []
+        [ div
+            [ class "container"
+            , class "mx-auto"
+            ]
             [ input
                 [ placeholder "Name"
                 , onInput Character.Name

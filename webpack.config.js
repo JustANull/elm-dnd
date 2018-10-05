@@ -1,6 +1,8 @@
+const glob = require("glob");
 const path = require("path");
 
 const history = require("koa-connect-history-api-fallback");
+const whitelister = require("purgecss-whitelister");
 
 const webpack = require("webpack");
 const merge = require("webpack-merge");
@@ -10,10 +12,11 @@ const CopyPlugin = require("copy-webpack-plugin");
 const HtmlPlugin = require("html-webpack-plugin");
 const OptimizeCssAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const PurgeCssPlugin = require("purgecss-webpack-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
 
 const mode = process.env.npm_lifecycle_event === "prod" ? "production" : "development";
-const filename = mode === "production" ? "[contenthash].js" : "index.js";
+const filename = mode === "production" ? "[contenthash]" : "index";
 
 const common = {
   mode: mode,
@@ -21,7 +24,7 @@ const common = {
   output: {
     path: path.join(__dirname, "dist"),
     publicPath: "./",
-    filename: filename
+    filename: filename + ".js"
   },
   plugins: [
     new HtmlPlugin({
@@ -43,7 +46,8 @@ const common = {
   ],
   resolve: {
     modules: [
-      "node_modules"
+      path.join(__dirname, "apps/web/src"),
+      path.join(__dirname, "node_modules")
     ],
     extensions: [".css", ".elm", ".js"]
   },
@@ -64,7 +68,8 @@ const common = {
         exclude: [/\belm\-stuff\b/],
         loaders: [
           mode === "production" ? MiniCssExtractPlugin.loader : "style-loader",
-          "css-loader?url=false"
+          "css-loader?url=false",
+          "postcss-loader"
         ]
       }
     ]
@@ -151,7 +156,21 @@ if (mode === "development") {
         }
       ]),
       new MiniCssExtractPlugin({
-        filename: "[contenthash].css"
+        filename: filename + ".css"
+      }),
+      new PurgeCssPlugin({
+        whitelist: whitelister("node_modules/tailwindcss/css/preflight.css"),
+        paths: glob.sync(path.join(__dirname, "apps/web/src/**/*.elm"), { nodir: true }),
+        extractors: [
+          {
+            extractor: class {
+              static extract(content) {
+                return content.match(/(?<=")(?:[^"\n]|\\.)*(?=")/g) || [];
+              }
+            },
+            extensions: [".elm"]
+          }
+        ]
       })
     ],
     module: {
