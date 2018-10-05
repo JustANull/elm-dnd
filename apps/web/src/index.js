@@ -1,6 +1,8 @@
 "use strict";
 
-import "styles";
+import "tailwind";
+import "global";
+
 import { Elm } from "./Main";
 
 var content = document.createElement("div");

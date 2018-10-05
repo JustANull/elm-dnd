@@ -159,7 +159,10 @@ if (mode === "development") {
         filename: filename + ".css"
       }),
       new PurgeCssPlugin({
-        whitelist: whitelister("node_modules/tailwindcss/css/preflight.css"),
+        whitelist: whitelister([
+          path.join(__dirname, "apps/web/src/global.css"),
+          path.join(__dirname, "node_modules/tailwindcss/css/preflight.css")
+        ]),
         paths: glob.sync(path.join(__dirname, "apps/web/src/**/*.elm"), { nodir: true }),
         extractors: [
           {
