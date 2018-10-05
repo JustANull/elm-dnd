@@ -15,24 +15,24 @@ import Skill
 import String
 
 
-pureUpdate2 : (a -> b -> c) -> (a -> b -> ( c, Cmd d ))
-pureUpdate2 f =
-    \aVal bVal -> ( f aVal bVal, Cmd.none )
-
-
-initCharacter : Int -> ( Character.Character, Cmd Character.Message )
-initCharacter _ =
-    ( Character.defaultCharacter, Cmd.none )
-
-
 main : Program Int Character.Character Character.Message
 main =
     Browser.document
-        { init = initCharacter
+        { init = init
         , subscriptions = always Sub.none
         , view = view
         , update = pureUpdate2 <| flip Character.update
         }
+
+
+init : Int -> ( Character.Character, Cmd Character.Message )
+init _ =
+    ( Character.defaultCharacter, Cmd.none )
+
+
+pureUpdate2 : (a -> b -> c) -> (a -> b -> ( c, Cmd d ))
+pureUpdate2 f =
+    \aVal bVal -> ( f aVal bVal, Cmd.none )
 
 
 labeledInput : List (Attribute msg) -> List (Html msg) -> Html msg
