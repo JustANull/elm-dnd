@@ -3,12 +3,11 @@ module Main exposing (main)
 import Ability
 import Browser exposing (Document)
 import Character
-import Css exposing (..)
 import Flip exposing (flip)
-import Html.Styled exposing (Attribute, Html, button, div, input, label, text)
-import Html.Styled.Attributes exposing (checked, css, placeholder, type_)
-import Html.Styled.Events exposing (onCheck, onInput)
-import Html.Styled.Lazy exposing (lazy2, lazy3)
+import Html exposing (Attribute, Html, button, div, input, label, text)
+import Html.Attributes exposing (checked, class, placeholder, type_)
+import Html.Events exposing (onCheck, onInput)
+import Html.Lazy exposing (lazy2, lazy3)
 import Maybe
 import Result
 import Skill
@@ -114,38 +113,26 @@ view character =
     in
     { title = "elm-dnd"
     , body =
-        List.map Html.Styled.toUnstyled
-            [ div
-                [ css
-                    [ displayFlex
-                    , flexDirection column
-                    ]
+        [ div []
+            [ input
+                [ placeholder "Name"
+                , onInput Character.Name
                 ]
-                [ input
-                    [ placeholder "Name"
-                    , onInput Character.Name
-                    ]
-                    []
-                , labeledInput
-                    [ type_ "number"
-                    , placeholder <| String.fromInt Character.defaultLevel
-                    , onInput cleanInput
-                    ]
-                    [ text <| toSignedString <| Character.proficiencyModifier character ]
-                , Html.Styled.map Character.Ability
-                    (div []
-                        (List.map (abilityInput character) Ability.list)
-                    )
-                , Html.Styled.map Character.Skill
-                    (div
-                        [ css
-                            [ displayFlex
-                            , flexDirection column
-                            , flexWrap wrap
-                            ]
-                        ]
-                        (List.map (skillInput character) Skill.list)
-                    )
+                []
+            , labeledInput
+                [ type_ "number"
+                , placeholder <| String.fromInt Character.defaultLevel
+                , onInput cleanInput
                 ]
+                [ text <| toSignedString <| Character.proficiencyModifier character ]
+            , Html.map Character.Ability
+                (div []
+                    (List.map (abilityInput character) Ability.list)
+                )
+            , Html.map Character.Skill
+                (div []
+                    (List.map (skillInput character) Skill.list)
+                )
             ]
+        ]
     }
