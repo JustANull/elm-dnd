@@ -17,7 +17,7 @@ const TerserPlugin = require("terser-webpack-plugin");
 
 const mode = process.env.npm_lifecycle_event === "prod" ? "production" : "development";
 const filename = mode === "production" ? "[contenthash:8]" : "index";
-const resourceFilename = mode === "production" ? "[hash:8].[ext]" : "[name].[ext]"
+const resourceFilename = mode === "production" ? "[hash:8].[ext]" : "[name].[ext]";
 
 const common = {
   mode: mode,
