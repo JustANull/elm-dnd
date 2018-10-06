@@ -7,6 +7,15 @@
 .input-text {
   @apply border-b border-grey-lighter;
 }
-.input-text:focus-within {
-  @apply border-blue;
+.input-text::after {
+  content: "";
+  @apply absolute w-full bg-blue-light;
+  bottom: 0;
+  left: 0;
+  height: 1px;
+  transform: scaleX(0);
+  transition: transform 0.2s;
+}
+.input-text:focus-within::after {
+  transform: scaleX(1);
 }
