@@ -34,7 +34,7 @@ pureUpdate2 f =
 labeledInput3 : List (Attribute msg) -> List (Attribute msg) -> List (Html msg) -> Html msg
 labeledInput3 labelAttributes attributes lbl =
     label
-        ([ class "m-1"
+        ([ class "p-1"
          , class "relative"
          , class "flex"
          , class "items-center"
