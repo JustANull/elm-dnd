@@ -29,8 +29,7 @@ const common = {
   },
   plugins: [
     new HtmlPlugin({
-      title: "elm-dnd",
-      inject: "body",
+      template: "apps/web/src/template.html",
       minify: mode === "production" && {
         collapseWhitespace: true,
         minifyURLs: true,
@@ -172,7 +171,6 @@ if (mode === "development") {
       }),
       new PurgeCssPlugin({
         whitelist: whitelister([
-          path.join(__dirname, "apps/web/src/global.css"),
           path.join(__dirname, "node_modules/tailwindcss/css/preflight.css")
         ]),
         paths: glob.sync(path.join(__dirname, "apps/web/src/**/*.elm"), { nodir: true }),
