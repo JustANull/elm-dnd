@@ -2,6 +2,7 @@ const glob = require("glob");
 const path = require("path");
 
 const history = require("koa-connect-history-api-fallback");
+const purgeCssFromHtml = require("purgecss-from-html");
 const whitelister = require("purgecss-whitelister");
 
 const webpack = require("webpack");
@@ -173,7 +174,7 @@ if (mode === "development") {
         whitelist: whitelister([
           path.join(__dirname, "node_modules/tailwindcss/css/preflight.css")
         ]),
-        paths: glob.sync(path.join(__dirname, "apps/web/src/**/*.elm"), { nodir: true }),
+        paths: glob.sync(path.join(__dirname, "apps/web/src/**/*.{elm,html}"), { nodir: true }),
         extractors: [
           {
             extractor: class {
@@ -182,6 +183,10 @@ if (mode === "development") {
               }
             },
             extensions: [".elm"]
+          },
+          {
+            extractor: purgeCssFromHtml,
+            extensions: [".html"]
           }
         ]
       })
