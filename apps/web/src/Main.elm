@@ -31,11 +31,25 @@ pureUpdate2 f =
     \aVal bVal -> ( f aVal bVal, Cmd.none )
 
 
-labeledInput : List (Attribute msg) -> List (Html msg) -> Html msg
-labeledInput attributes lbl =
-    label [] <|
-        input attributes []
+labeledInput3 : List (Attribute msg) -> List (Attribute msg) -> List (Html msg) -> Html msg
+labeledInput3 labelAttributes attributes lbl =
+    label
+        ([ class "m-1"
+         , class "flex"
+         , class "items-center"
+         ]
+            ++ labelAttributes
+        )
+    <|
+        input
+            (class "mr-1" :: attributes)
+            []
             :: lbl
+
+
+labeledInput2 : List (Attribute msg) -> List (Html msg) -> Html msg
+labeledInput2 attributes lbl =
+    labeledInput3 [] attributes lbl
 
 
 toSignedString : Int -> String
@@ -45,15 +59,17 @@ toSignedString n =
             String.fromInt <| abs n
     in
     if n >= 0 then
-        "\u{0002b}" ++ asString
+        "+" ++ asString
 
     else
-        "\u{02212}" ++ asString
+        "−" ++ asString
 
 
 abilityInput_ : Int -> Ability.Ability -> Html Ability.Message
 abilityInput_ modifier ability =
-    labeledInput
+    labeledInput3
+        [ class "input-text"
+        ]
         [ type_ "number"
         , placeholder <| String.fromInt Ability.default
         , onInput <| String.toInt >> Maybe.withDefault Ability.default >> ability
@@ -82,7 +98,7 @@ skillInput_ hasSkill modifier skill =
         description =
             skillDescription ++ toSignedString modifier
     in
-    labeledInput
+    labeledInput2
         [ type_ "checkbox"
         , checked hasSkill
         , onCheck skill
@@ -111,19 +127,27 @@ view character =
     { title = "elm-dnd"
     , body =
         [ div
-            [ class "flex"
+            [ class "min-w-screen"
+            , class "min-h-screen"
+            , class "flex"
             , class "flex-col"
+            , class "items-center"
             ]
             [ div
                 [ class "flex"
-                , class "flex-row"
+                , class "flex-col"
+                , class "sm:flex-row"
                 ]
-                [ input
+                [ labeledInput3
+                    [ class "input-text"
+                    ]
                     [ placeholder "Name"
                     , onInput Character.Name
                     ]
                     []
-                , labeledInput
+                , labeledInput3
+                    [ class "input-text"
+                    ]
                     [ type_ "number"
                     , placeholder <| String.fromInt Character.defaultLevel
                     , onInput cleanInput
@@ -132,21 +156,22 @@ view character =
                 ]
             , div
                 [ class "flex"
-                , class "flex-row"
+                , class "flex-col"
+                , class "sm:flex-row"
                 ]
                 [ Html.map Character.Ability
-                      (div
-                         [ class "flex"
-                         , class "flex-col"
-                         ]
-                         (List.map (abilityInput character) Ability.list)
-                      )
+                    (div
+                        [ class "flex"
+                        , class "flex-col"
+                        ]
+                        (List.map (abilityInput character) Ability.list)
+                    )
                 , Html.map Character.Skill
                     (div
-                       [ class "flex"
-                       , class "flex-col"
-                       ]
-                       (List.map (skillInput character) Skill.list)
+                        [ class "flex"
+                        , class "flex-col"
+                        ]
+                        (List.map (skillInput character) Skill.list)
                     )
                 ]
             ]

@@ -3,3 +3,10 @@
 @tailwind components;
 
 @tailwind utilities;
+
+.input-text {
+  @apply border-b border-grey-lighter;
+}
+.input-text:focus-within {
+  @apply border-blue;
+}
