@@ -8,10 +8,7 @@ import Html exposing (Attribute, Html, button, div, input, label, text)
 import Html.Attributes exposing (checked, class, classList, placeholder, type_)
 import Html.Events exposing (onCheck, onInput)
 import Html.Lazy exposing (lazy2, lazy3)
-import Maybe
-import Result
 import Skill
-import String
 
 
 main : Program Int Character.Character Character.Message
@@ -45,13 +42,13 @@ toSignedString : Int -> String
 toSignedString n =
     let
         asString =
-            String.fromInt n
+            String.fromInt <| abs n
     in
     if n >= 0 then
-        "+" ++ asString
+        "\u{0002b}" ++ asString
 
     else
-        asString
+        "\u{02212}" ++ asString
 
 
 abilityInput_ : Int -> Ability.Ability -> Html Ability.Message
@@ -114,28 +111,44 @@ view character =
     { title = "elm-dnd"
     , body =
         [ div
-            [ class "container"
-            , class "mx-auto"
+            [ class "flex"
+            , class "flex-col"
             ]
-            [ input
-                [ placeholder "Name"
-                , onInput Character.Name
+            [ div
+                [ class "flex"
+                , class "flex-row"
                 ]
-                []
-            , labeledInput
-                [ type_ "number"
-                , placeholder <| String.fromInt Character.defaultLevel
-                , onInput cleanInput
+                [ input
+                    [ placeholder "Name"
+                    , onInput Character.Name
+                    ]
+                    []
+                , labeledInput
+                    [ type_ "number"
+                    , placeholder <| String.fromInt Character.defaultLevel
+                    , onInput cleanInput
+                    ]
+                    [ text <| toSignedString <| Character.proficiencyModifier character ]
                 ]
-                [ text <| toSignedString <| Character.proficiencyModifier character ]
-            , Html.map Character.Ability
-                (div []
-                    (List.map (abilityInput character) Ability.list)
-                )
-            , Html.map Character.Skill
-                (div []
-                    (List.map (skillInput character) Skill.list)
-                )
+            , div
+                [ class "flex"
+                , class "flex-row"
+                ]
+                [ Html.map Character.Ability
+                      (div
+                         [ class "flex"
+                         , class "flex-col"
+                         ]
+                         (List.map (abilityInput character) Ability.list)
+                      )
+                , Html.map Character.Skill
+                    (div
+                       [ class "flex"
+                       , class "flex-col"
+                       ]
+                       (List.map (skillInput character) Skill.list)
+                    )
+                ]
             ]
         ]
     }

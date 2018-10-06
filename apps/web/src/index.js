@@ -1,7 +1,11 @@
 "use strict";
 
+// CSS
 import "tailwind";
 import "global";
+
+// Fonts
+import "typeface-lato";
 
 import { Elm } from "./Main";
 

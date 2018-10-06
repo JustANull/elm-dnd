@@ -1,0 +1,4 @@
+html {
+  @apply font-sans;
+  font-variant-numeric: tabular-nums;
+}
