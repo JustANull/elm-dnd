@@ -2,8 +2,9 @@
   "private": true,
   "main": "index.js",
   "scripts": {
-    "start": "npm run dev",
+    "elm-format": "elm-format --yes apps/web/src/",
     "dev": "webpack-serve --port 3000",
+    "start": "npm run dev",
     "build": "webpack",
     "prod": "webpack -p",
     "predeploy": "npm run prod",
