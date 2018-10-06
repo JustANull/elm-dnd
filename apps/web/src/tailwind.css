@@ -6,6 +6,7 @@
 
 .input-text {
   @apply border-b border-grey-lighter;
+  cursor: text;
 }
 .input-text::after {
   content: "";
