@@ -1,43 +1,195 @@
-module Main exposing (main)
+port module Main exposing (main)
 
 import Ability
 import Browser exposing (Document)
 import Character
 import Flip exposing (flip)
-import Html exposing (Attribute, Html, button, div, input, label, text)
+import Html exposing (Attribute, Html, button, div, input, label, p, text)
 import Html.Attributes exposing (checked, class, classList, placeholder, type_)
-import Html.Events exposing (onCheck, onInput)
+import Html.Events exposing (onCheck, onClick, onInput)
 import Html.Lazy exposing (lazy2, lazy3)
+import Json.Decode
+import Json.Encode
+import Settings
 import Skill
 
 
-main : Program Int Character.Character Character.Message
+port saveSettings : Json.Encode.Value -> Cmd msg
+
+
+main : Program Json.Decode.Value Model Message
 main =
     Browser.document
         { init = init
         , subscriptions = always Sub.none
         , view = view
-        , update = pureUpdate2 <| flip Character.update
+        , update = update
         }
 
 
-init : Int -> ( Character.Character, Cmd Character.Message )
-init _ =
-    ( Character.defaultCharacter, Cmd.none )
+type alias Model =
+    { settings : Settings.Settings
+    , character : Character.Character
+    }
 
 
-pureUpdate2 : (a -> b -> c) -> (a -> b -> ( c, Cmd d ))
-pureUpdate2 f =
-    \aVal bVal -> ( f aVal bVal, Cmd.none )
+type Message
+    = Settings Settings.Message
+    | Character Character.Message
+
+
+init : Json.Decode.Value -> ( Model, Cmd Message )
+init maybeSettings =
+    let
+        settings =
+            case Json.Decode.decodeValue Settings.decoder maybeSettings of
+                Err _ ->
+                    Settings.defaultSettings
+
+                Ok value ->
+                    value
+    in
+    ( { settings = settings
+      , character = Character.defaultCharacter
+      }
+    , saveSettings <| Settings.encode settings
+    )
+
+
+update : Message -> Model -> ( Model, Cmd Message )
+update msg model =
+    case msg of
+        Settings settings_msg ->
+            let
+                updated =
+                    { model | settings = Settings.update model.settings settings_msg }
+            in
+            ( updated, saveSettings <| Settings.encode updated.settings )
+
+        Character character_msg ->
+            ( { model | character = Character.update model.character character_msg }, Cmd.none )
+
+
+view : Model -> Document Message
+view model =
+    let
+        cleanInput =
+            String.toInt >> Maybe.withDefault Character.defaultLevel >> Character.Level
+
+        settings =
+            model.settings
+
+        character =
+            model.character
+    in
+    { title = "elm-dnd"
+    , body =
+        [ div
+            [ classList
+                [ ( "min-w-screen", True )
+                , ( "min-h-screen", True )
+                , ( "bg-primary", True )
+                , ( "text-primary", True )
+                , ( Settings.themeClass settings.theme, True )
+                , ( "relative", True )
+                ]
+            ]
+            <| div
+                [ classList
+                    [ ( "flex", True )
+                    , ( "flex-col", True )
+                    , ( "items-center", True )
+                    ]
+                ]
+                (List.map (Html.map Character)
+                    [ div
+                        [ classList
+                            [ ( "flex", True )
+                            , ( "flex-col", True )
+                            , ( "sm:flex-row", True )
+                            ]
+                        ]
+                        [ labeledInput3
+                            [ classList
+                                [ ( "input-text", True )
+                                , ( "sm:mr-2", True )
+                                ]
+                            ]
+                            [ placeholder "Name"
+                            , onInput Character.Name
+                            ]
+                            []
+                        , labeledInput3
+                            [ class "input-text"
+                            ]
+                            [ type_ "number"
+                            , placeholder <| String.fromInt Character.defaultLevel
+                            , onInput cleanInput
+                            ]
+                            [ text <| toSignedString <| Character.proficiencyModifier character ]
+                        ]
+                    , div
+                        [ classList
+                            [ ( "flex", True )
+                            , ( "flex-col", True )
+                            , ( "sm:flex-row", True )
+                            ]
+                        ]
+                        [ Html.map Character.Ability
+                            (div
+                                [ classList
+                                    [ ( "flex", True )
+                                    , ( "flex-col", True )
+                                    ]
+                                ]
+                                (List.map (abilityInput character) Ability.list)
+                            )
+                        , Html.map Character.Skill
+                            (div
+                                [ classList
+                                    [ ( "flex", True )
+                                    , ( "flex-col", True )
+                                    ]
+                                ]
+                                (List.map (skillInput character) Skill.list)
+                            )
+                        ]
+                    ]
+                )
+                :: List.map (Html.map Settings)
+                    [ button
+                        [ onClick Settings.ToggleTheme
+                        , classList
+                            [ ( "sticky", True )
+                            , ( "pin-b", True )
+                            , ( "p-1", True )
+                            , ( "ml-1", True )
+                            , ( "rounded", True )
+                            , ( "bg-highlight", True )
+                            ]
+                        ]
+                        [ text <|
+                            case settings.theme of
+                                Settings.Light ->
+                                    "-> Dark Mode"
+
+                                Settings.Dark ->
+                                    "-> Light Mode"
+                        ]
+                    ]
+        ]
+    }
 
 
 labeledInput3 : List (Attribute msg) -> List (Attribute msg) -> List (Html msg) -> Html msg
 labeledInput3 labelAttributes attributes lbl =
     label
-        ([ class "p-1"
-         , class "relative"
-         , class "flex"
-         , class "items-center"
+        ([ classList
+            [ ( "p-1", True )
+            , ( "relative", True )
+            , ( "flex", True )
+            , ( "items-center", True )
+            ]
          ]
             ++ labelAttributes
         )
@@ -117,64 +269,3 @@ skillInput character skill =
             Character.skillModifier character skill
     in
     lazy3 skillInput_ hasSkill modifier skill
-
-
-view : Character.Character -> Document Character.Message
-view character =
-    let
-        cleanInput =
-            String.toInt >> Maybe.withDefault Character.defaultLevel >> Character.Level
-    in
-    { title = "elm-dnd"
-    , body =
-        [ div
-            [ class "min-w-screen"
-            , class "min-h-screen"
-            , class "flex"
-            , class "flex-col"
-            , class "items-center"
-            ]
-            [ div
-                [ class "flex"
-                , class "flex-col"
-                , class "sm:flex-row"
-                ]
-                [ labeledInput3
-                    [ class "input-text"
-                    ]
-                    [ placeholder "Name"
-                    , onInput Character.Name
-                    ]
-                    []
-                , labeledInput3
-                    [ class "input-text"
-                    ]
-                    [ type_ "number"
-                    , placeholder <| String.fromInt Character.defaultLevel
-                    , onInput cleanInput
-                    ]
-                    [ text <| toSignedString <| Character.proficiencyModifier character ]
-                ]
-            , div
-                [ class "flex"
-                , class "flex-col"
-                , class "sm:flex-row"
-                ]
-                [ Html.map Character.Ability
-                    (div
-                        [ class "flex"
-                        , class "flex-col"
-                        ]
-                        (List.map (abilityInput character) Ability.list)
-                    )
-                , Html.map Character.Skill
-                    (div
-                        [ class "flex"
-                        , class "flex-col"
-                        ]
-                        (List.map (skillInput character) Skill.list)
-                    )
-                ]
-            ]
-        ]
-    }

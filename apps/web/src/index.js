@@ -9,9 +9,13 @@ import "typeface-lato";
 // Elm
 import { Elm } from "./Main";
 
-var content = document.createElement("div");
+const content = document.createElement("div");
 const app = Elm.Main.init({
-  flags: 0,
+  flags: JSON.parse(localStorage.getItem("settings")) || {},
   node: content
 });
 document.body.appendChild(content);
+
+app.ports.saveSettings.subscribe(function(data) {
+  localStorage.setItem("settings", JSON.stringify(data));
+});

@@ -43,6 +43,7 @@ View the full documentation at https://tailwindcss.com.
 |
 */
 
+/*
 let colors = {
   'transparent': 'transparent',
 
@@ -128,24 +129,9 @@ let colors = {
   'pink-lighter': '#ffbbca',
   'pink-lightest': '#ffebef',
 }
+*/
 
 module.exports = {
-
-  /*
-  |-----------------------------------------------------------------------------
-  | Colors                                  https://tailwindcss.com/docs/colors
-  |-----------------------------------------------------------------------------
-  |
-  | The color palette defined above is also assigned to the "colors" key of
-  | your Tailwind config. This makes it easy to access them in your CSS
-  | using Tailwind's config helper. For example:
-  |
-  | .error { color: config('colors.red') }
-  |
-  */
-
-  colors: colors,
-
 
   /*
   |-----------------------------------------------------------------------------
@@ -342,7 +328,9 @@ module.exports = {
   |
   */
 
-  textColors: colors,
+  textColors: {
+    "primary": "var(--color-text-primary)"
+  },
 
 
   /*
@@ -358,7 +346,10 @@ module.exports = {
   |
   */
 
-  backgroundColors: colors,
+  backgroundColors: {
+    "primary": "var(--color-bg-primary)",
+    "highlight": "var(--color-bg-highlight)"
+  },
 
 
   /*
@@ -420,7 +411,9 @@ module.exports = {
   |
   */
 
-  borderColors: global.Object.assign({ default: colors['grey-light'] }, colors),
+  borderColors: {
+    default: "var(--color-border-default)"
+  },
 
 
   /*

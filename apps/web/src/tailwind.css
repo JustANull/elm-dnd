@@ -1,17 +1,41 @@
 @tailwind preflight;
 
+/*! purgecss ignore */
+input {
+  color: var(--color-text-primary);
+  background-color: var(--color-bg-primary);
+}
+
 @tailwind components;
 
 @tailwind utilities;
 
+.theme-light {
+  --color-primary: #38c172;
+  --color-highlight: #3490dc;
+  --color-text-primary: #000;
+  --color-bg-primary: #fff;
+  --color-bg-highlight: #3490dc;
+  --color-border-default: #dae1e7;
+}
+
+.theme-dark {
+  --color-primary: #2c7b8f;
+  --color-highlight: #d75f00;
+  --color-text-primary: #918175;
+  --color-bg-primary: #1c1b19;
+  --color-bg-highlight: #d75f00;
+  --color-border-default: #4e4e4e;
+}
+
 .input-text {
-  @apply border-b border-grey-lighter;
+  @apply border-b;
   cursor: text;
 }
 .input-text::after {
   content: "";
-  @apply absolute w-full bg-blue-light;
-  bottom: 0;
+  @apply absolute w-full bg-highlight;
+  bottom: -1px;
   left: 0;
   height: 1px;
   transform: scaleX(0);
